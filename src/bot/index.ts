@@ -4,7 +4,7 @@ import { hydrateReply, parseMode } from '@grammyjs/parse-mode'
 import type { BotConfig, StorageAdapter } from 'grammy'
 import { Bot as TelegramBot } from 'grammy'
 import { sequentialize } from '@grammyjs/runner'
-import { welcomeFeature } from '#root/bot/features/welcome.js'
+import { conversations } from '@grammyjs/conversations'
 import { adminFeature } from '#root/bot/features/admin.js'
 import { languageFeature } from '#root/bot/features/language.js'
 import { unhandledFeature } from '#root/bot/features/unhandled.js'
@@ -16,6 +16,8 @@ import { createContextConstructor } from '#root/bot/context.js'
 import { i18n, isMultipleLocales } from '#root/bot/i18n.js'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/config.js'
+import { startFeature } from '#root/bot/features/start.js'
+import { commonFeature } from '#root/bot/features/common.js'
 
 interface Dependencies {
   config: Config
@@ -59,11 +61,15 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   protectedBot.use(session({ getSessionKey, storage: options.botSessionStorage }))
   protectedBot.use(i18n)
 
+  protectedBot.use(conversations())
+
   // Handlers
-  protectedBot.use(welcomeFeature)
+  protectedBot.use(startFeature)
   protectedBot.use(adminFeature)
   if (isMultipleLocales)
     protectedBot.use(languageFeature)
+
+  protectedBot.use(commonFeature)
 
   // must be the last handler
   protectedBot.use(unhandledFeature)

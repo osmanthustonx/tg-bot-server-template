@@ -1,5 +1,5 @@
 import { pino } from 'pino'
-import { config } from '#root/config.js'
+import { config } from '#root/configs/bot.js'
 
 export const logger = pino({
   level: config.logLevel,
@@ -21,7 +21,10 @@ export const logger = pino({
             {
               target: 'pino/file',
               level: config.logLevel,
-              options: {},
+              options: {
+                colorize: true,
+                translateTime: true,
+              },
             },
           ]),
     ],

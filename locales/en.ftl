@@ -1,3 +1,12 @@
+common = 
+  .welcome = Welcome
+  .back = Back
+  .retry = Try again
+  .delete = Delete
+
+start = 
+  .language = language
+
 ## Commands
 
 start-command-description = Start the bot

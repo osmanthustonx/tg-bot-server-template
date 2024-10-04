@@ -9,7 +9,7 @@ import type { Env } from '#root/server/environment.js'
 import type { Bot } from '#root/bot/index.js'
 import { requestLogger } from '#root/server/middlewares/request-logger.js'
 import type { Logger } from '#root/logger.js'
-import type { Config } from '#root/config.js'
+import type { Config } from '#root/configs/bot.js'
 
 interface Dependencies {
   bot: Bot

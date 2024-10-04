@@ -15,7 +15,7 @@ import type { Context, SessionData } from '#root/bot/context.js'
 import { createContextConstructor } from '#root/bot/context.js'
 import { i18n, isMultipleLocales } from '#root/bot/i18n.js'
 import type { Logger } from '#root/logger.js'
-import type { Config } from '#root/config.js'
+import type { Config } from '#root/configs/bot.js'
 import { startFeature } from '#root/bot/features/start.js'
 import { commonFeature } from '#root/bot/features/common.js'
 

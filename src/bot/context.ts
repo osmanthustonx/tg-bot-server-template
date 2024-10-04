@@ -6,7 +6,7 @@ import type { I18nFlavor } from '@grammyjs/i18n'
 import type { ParseModeFlavor } from '@grammyjs/parse-mode'
 import type { ConversationFlavor } from '@grammyjs/conversations'
 import type { Logger } from '#root/logger.js'
-import type { Config } from '#root/config.js'
+import type { Config } from '#root/configs/bot.js'
 
 export interface SessionData {
   // field?: string;

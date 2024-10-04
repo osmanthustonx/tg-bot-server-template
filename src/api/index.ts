@@ -1,5 +1,5 @@
 import ky from 'ky'
-import { config } from '#root/config.js'
+import { config } from '#root/configs/bot.js'
 import type { BaseRes } from '#root/api/response.js'
 import serviceAPI from '#root/api/service.js'
 import { convertKeysToCamelCase, convertKeysToSnakeCase } from '#root/utils/transform.js'

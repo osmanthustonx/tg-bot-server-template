@@ -10,6 +10,7 @@ import type { Bot } from '#root/bot/index.js'
 import { requestLogger } from '#root/server/middlewares/request-logger.js'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/configs/bot.js'
+import botRouter from '#root/server/routes/bot.route.js'
 
 interface Dependencies {
   bot: Bot
@@ -56,6 +57,8 @@ export function createServer(dependencies: Dependencies) {
   })
 
   server.get('/', c => c.json({ status: true }))
+
+  server.route('/bot', botRouter)
 
   if (config.isWebhookMode) {
     server.post(

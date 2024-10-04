@@ -5,7 +5,10 @@
 // 3. 不包含業務邏輯
 // 4. 返回原始數據，不進行數據轉換
 
-export async function fetchBasic(uuid: string) {
+import { service } from '#root/api/index.js'
+
+export async function fetchBasic(dataKey: string) {
   // 從數據庫獲取 bot 狀態
-  return Promise.resolve(() => uuid)
+
+  return service.getTest(dataKey)
 }

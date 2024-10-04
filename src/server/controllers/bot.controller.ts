@@ -10,9 +10,10 @@ import type { Context } from 'hono'
 import { getBasic } from '#root/server/services/bot.service.js'
 
 export async function getBasicHandler(c: Context) {
-  const uuid = c.req.param('uuid')
+  const dataKey = c.req.query('dataKey')
+
   try {
-    const status = await getBasic(uuid)
+    const status = await getBasic(dataKey ?? '85452C1D')
     return c.json(status)
   }
   catch (error) {

@@ -7,8 +7,8 @@
 
 import { fetchBasic } from '#root/server/repository/bot.repository.js'
 
-export async function getBasic(uuid: string) {
-  const data = await fetchBasic(uuid)
+export async function getBasic(dataKey: string) {
+  const data = await fetchBasic(dataKey)
   // 在這裡可以添加額外的業務邏輯
-  return { testData: data }
+  return data
 }

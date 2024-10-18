@@ -13,11 +13,7 @@ export default function serviceAPI(instance: KyInstance) {
         headers: {
           uuid: ctx.from?.id.toString(),
         },
-        json: {
-          payload: {
-            ...ctx.from,
-          },
-        },
+        json: ctx.from,
       }).json())
     },
   }

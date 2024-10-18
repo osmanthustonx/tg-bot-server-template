@@ -11,7 +11,7 @@ export const api = ky.extend({ prefixUrl: config.serviceApiUrl, hooks: {
         return request
       const originalBody = JSON.parse(option.body as string)
       return new Request(request, {
-        body: originalBody.payload ? JSON.stringify(convertKeysToSnakeCase(originalBody.payload)) : undefined,
+        body: originalBody ? JSON.stringify(convertKeysToSnakeCase(originalBody)) : undefined,
       })
     },
   ],

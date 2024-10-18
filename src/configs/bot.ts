@@ -9,6 +9,9 @@ const baseConfigSchema = v.object({
   botAllowedUpdates: v.optional(v.pipe(v.string(), v.transform(JSON.parse), v.array(v.picklist(API_CONSTANTS.ALL_UPDATE_TYPES))), '[]'),
   botAdmins: v.optional(v.pipe(v.string(), v.transform(JSON.parse), v.array(v.number())), '[]'),
   serviceApiUrl: v.optional(v.string()),
+  redisHost: v.optional(v.string(), ''),
+  redisPort: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '6379'),
+  redisIndex: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '1'),
 })
 
 const configSchema = v.variant('botMode', [

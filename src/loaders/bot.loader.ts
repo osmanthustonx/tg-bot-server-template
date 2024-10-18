@@ -3,9 +3,14 @@ import { createBot } from '#root/bot/index.js'
 import type { Config, PollingConfig, WebhookConfig } from '#root/configs/bot.js'
 import type { Logger } from '#root/logger.js'
 import { onShutdown } from '#root/utils/starter.js'
+import { loadRedisStorage } from '#root/loaders/redis.loader.js'
 
 export default async function loadBot(config: Config, logger: Logger) {
-  const bot = createBot(config.botToken, { config, logger })
+  const { botSessionStorage } = loadRedisStorage()
+
+  const bot = createBot(config.botToken, { config, logger }, {
+    botSessionStorage,
+  })
   await bot.init()
   if (config.isWebhookMode) {
     await loadWebhookBot(bot, config, logger)

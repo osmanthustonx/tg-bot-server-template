@@ -5,12 +5,12 @@ common =
   .delete = Delete
 
 start = 
-  .view-todo = View {$name}
-  .view-todo-list = View ToDo List
-  .view-completed-list = View Completed List
-  .view-deleted-list = View Deleted List
-  .add-todo = Add ToDo
-  .settings = Settings
+  .view-todo = 查看 {$name}
+  .view-todo-list = 查看待辦清單
+  .view-completed-list = 查看已完成清單
+  .view-deleted-list = 查看已刪除清單
+  .add-todo = 新增待辦事項
+  .settings = 設定
   .language = language
 
 ## Commands

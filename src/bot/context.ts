@@ -8,8 +8,15 @@ import type { ConversationFlavor } from '@grammyjs/conversations'
 import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/configs/bot.js'
 
+interface todo { id: string, name: string, priority: 'high' | 'medium' | 'low', due_date: string, status: 'pending' | 'completed' | 'deleted', created_at: string }
+
 export interface SessionData {
-  // field?: string;
+  pending: todo[]
+  completed: (todo & { completed_at: string })[]
+  deleted: (todo & { deleted_at: string })[]
+  settings: {
+    reminders_enabled: boolean
+  }
 }
 
 interface ExtendedContextFlavor {

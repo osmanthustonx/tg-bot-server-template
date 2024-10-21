@@ -5,12 +5,11 @@ import type { MessageXFragment } from '@grammyjs/hydrate/out/data/message.js'
 import type { Context } from '#root/bot/context.js'
 import { delay2 } from '#root/constants/time.js'
 import { deleteMessageKeyboard } from '#root/bot/keyboards/common.keyboard.js'
+import { timerManager } from '#root/bot/helpers/timer-manager.js'
 
 export async function removeMessage(ctx: Context, message: string, other?: Other<'sendMessage', 'chat_id' | 'text'>, delay = delay2) {
   return ctx.reply(message, other).then((msg) => {
-    setTimeout(() => {
-      msg.delete().catch(console.error)
-    }, delay)
+    timerManager.createTimer(msg, delay)
     return msg
   })
 }

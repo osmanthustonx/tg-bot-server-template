@@ -7,7 +7,7 @@ import { delay2 } from '#root/constants/time.js'
 import { deleteMessageKeyboard } from '#root/bot/keyboards/common.keyboard.js'
 import { timerManager } from '#root/bot/helpers/timer-manager.js'
 import { back, cancel } from '#root/bot/callback-data/common.callbackdata.js'
-import { selectPriority, viewCompletedList } from '#root/bot/callback-data/start.callbackdata.js'
+import { selectPriority, setTodoName, viewCompletedList } from '#root/bot/callback-data/start.callbackdata.js'
 
 export async function removeMessage(ctx: Context, message: string, other?: Other<'sendMessage', 'chat_id' | 'text'>, delay = delay2) {
   return ctx.reply(message, other).then((msg) => {
@@ -45,13 +45,14 @@ export async function conversationCheck(
   return leaveConversation(ctx, messageId)
 }
 
-export function leaveChecker(ctx: Context) {
+export function leaveConversationChecker(ctx: Context) {
   const isCommand = ['/start', '/language'].includes(ctx.message?.text ?? '')
   const shouldLeaveCallback = [
     cancel,
     back,
     selectPriority,
     viewCompletedList,
+    setTodoName,
   ].some((callback) => {
     return callback.filter().test(ctx.callbackQuery?.data ?? '')
   })
@@ -62,12 +63,46 @@ export function leaveChecker(ctx: Context) {
   return false
 }
 
+// 使用 Set 來存儲對話類型，提供 O(1) 的查找效率
+const MONITORED_CONVERSATIONS = new Set([
+  'create user',
+  'add todo',
+  // 在這裡添加更多對話類型
+])
+export async function redundantConversationChecker(ctx: Context): Promise<boolean> {
+  try {
+    const active = await ctx.conversation.active()
+
+    // 快速路徑：如果沒有活動對話，立即返回
+    if (!active || Object.keys(active).length === 0)
+      return false
+
+    // 使用 some 進行快速檢查，一旦找到匹配就返回
+    return Object.keys(active).some(key => MONITORED_CONVERSATIONS.has(key))
+  }
+  catch (error) {
+    console.error('Error checking redundant conversations:', error)
+  }
+
+  return false
+}
+
+// export async function redundantConversationChecker(ctx: Context) {
+//   const active = await ctx.conversation.active()
+
+//   if (active?.[SET_TODO_NAME_CONVERSATION] || active?.[SET_TODO_NAME_CONVERSATION]) {
+//     ctx.deleteMessage().catch(console.error)
+//     return true
+//   }
+//   return false
+// }
+
 export async function newLeaveConversation(
   ctx: Context,
   conversation: Conversation<Context>,
   messageIds: number[],
 ) {
-  if (leaveChecker(ctx)) {
+  if (leaveConversationChecker(ctx)) {
     ctx.deleteMessages(messageIds).catch(conversation.error)
     await conversation.skip()
   }

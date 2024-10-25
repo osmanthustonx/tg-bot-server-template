@@ -34,7 +34,7 @@ feature.callbackQuery(addTodo.filter(), logHandle('add todo'), (ctx) => {
   ])
 })
 
-feature.callbackQuery(setTodoName.filter(), logHandle('set todo name'), (ctx) => {
+feature.callbackQuery(setTodoName.filter(), logHandle('set todo name'), async (ctx) => {
   return Promise.all([
     ctx.conversation.enter(SET_TODO_NAME_CONVERSATION),
     ctx.answerCallbackQuery(),

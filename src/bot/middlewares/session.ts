@@ -8,6 +8,8 @@ export function session(options: Options): Middleware<Context> {
     getSessionKey: options.getSessionKey,
     storage: options.storage,
     initial: () => ({
+      conversationMsgBuffer: [],
+      adding: undefined,
       pending: [
         {
           id: '1',

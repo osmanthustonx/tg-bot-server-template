@@ -1,10 +1,12 @@
 import type { CallbackQueryContext, CommandContext } from 'grammy'
+import dedent from 'dedent'
 import type { Context } from '#root/bot/context.js'
 import { completedListMessage, todoListMessage, viewTodoMessage } from '#root/bot/messages/start.message.js'
-import { completedListKeyboard, startKeyboard, viewTodoKeyboard } from '#root/bot/keyboards/start.keyboard.js'
+import { addTodoKeyboard, completedListKeyboard, priorityKeyboard, startKeyboard, viewTodoKeyboard } from '#root/bot/keyboards/start.keyboard.js'
 import { completeTodo, deleteTodo, viewTodo } from '#root/bot/callback-data/start.callbackdata.js'
 
 export async function handleCommandStart(ctx: CommandContext<Context>) {
+  // ctx.conversation.exit()
   return ctx.reply(
     todoListMessage(ctx),
     { reply_markup: startKeyboard(ctx) },
@@ -30,6 +32,43 @@ export async function handleEditViewTodo(ctx: CallbackQueryContext<Context>) {
   return ctx.editMessageText(
     viewTodoMessage(ctx, id),
     { reply_markup: viewTodoKeyboard(ctx, id) },
+  )
+}
+
+export async function handleEditAddTodo(ctx: Context) {
+  if (!ctx.session.adding)
+    return
+  return ctx.editMessageText(
+    dedent`
+      添加代辦事項:
+      ${ctx.session.adding.name}
+      ${ctx.session.adding.priority}
+      ${ctx.session.adding.due_date}
+    `,
+    { reply_markup: addTodoKeyboard(ctx) },
+  )
+}
+
+export async function handleReplyAddTodo(ctx: Context) {
+  if (!ctx.session.adding)
+    return
+  return ctx.reply(
+    dedent`
+      添加代辦事項:
+      ${ctx.session.adding.name}
+      ${ctx.session.adding.priority}
+      ${ctx.session.adding.due_date}
+    `,
+    { reply_markup: addTodoKeyboard(ctx) },
+  )
+}
+
+export async function handleEditSelectPriority(ctx: Context) {
+  if (!ctx.session.adding)
+    return
+  return ctx.editMessageText(
+    dedent`請選擇優先級`,
+    { reply_markup: priorityKeyboard(ctx) },
   )
 }
 

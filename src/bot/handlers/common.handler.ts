@@ -6,6 +6,8 @@ import type { Context } from '#root/bot/context.js'
 import { delay2 } from '#root/constants/time.js'
 import { deleteMessageKeyboard } from '#root/bot/keyboards/common.keyboard.js'
 import { timerManager } from '#root/bot/helpers/timer-manager.js'
+import { back, cancel } from '#root/bot/callback-data/common.callbackdata.js'
+import { selectPriority, viewCompletedList } from '#root/bot/callback-data/start.callbackdata.js'
 
 export async function removeMessage(ctx: Context, message: string, other?: Other<'sendMessage', 'chat_id' | 'text'>, delay = delay2) {
   return ctx.reply(message, other).then((msg) => {
@@ -41,6 +43,34 @@ export async function conversationCheck(
 ) {
   await checkIsDeleteCallbackQuery(ctx, conversation)
   return leaveConversation(ctx, messageId)
+}
+
+export function leaveChecker(ctx: Context) {
+  const isCommand = ['/start', '/language'].includes(ctx.message?.text ?? '')
+  const shouldLeaveCallback = [
+    cancel,
+    back,
+    selectPriority,
+    viewCompletedList,
+  ].some((callback) => {
+    return callback.filter().test(ctx.callbackQuery?.data ?? '')
+  })
+
+  if (isCommand || shouldLeaveCallback) {
+    return true
+  }
+  return false
+}
+
+export async function newLeaveConversation(
+  ctx: Context,
+  conversation: Conversation<Context>,
+  messageIds: number[],
+) {
+  if (leaveChecker(ctx)) {
+    ctx.deleteMessages(messageIds).catch(conversation.error)
+    await conversation.skip()
+  }
 }
 
 export async function handleConversationFieldInput(

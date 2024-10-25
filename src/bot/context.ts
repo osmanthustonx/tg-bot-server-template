@@ -11,12 +11,14 @@ import type { Config } from '#root/configs/bot.js'
 interface todo { id: string, name: string, priority: 'high' | 'medium' | 'low', due_date: string, status: 'pending' | 'completed' | 'deleted', created_at: string }
 
 export interface SessionData {
+  adding?: todo
   pending: todo[]
   completed: (todo & { completed_at: string })[]
   deleted: (todo & { deleted_at: string })[]
   settings: {
     reminders_enabled: boolean
   }
+  conversationMsgBuffer: number[]
 }
 
 interface ExtendedContextFlavor {

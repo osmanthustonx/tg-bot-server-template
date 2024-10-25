@@ -3,6 +3,7 @@ common =
   .back = Back
   .retry = Try again
   .delete = Delete
+  .cancel = 取消
 
 start = 
   .view-todo = 查看 {$name}

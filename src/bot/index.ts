@@ -18,6 +18,8 @@ import type { Logger } from '#root/logger.js'
 import type { Config } from '#root/configs/bot.js'
 import { startFeature } from '#root/bot/features/start.js'
 import { commonFeature } from '#root/bot/features/common.js'
+import { setTodoNameConversation } from '#root/bot/conversation/start.conversation.js'
+import { exitConversationMiddleware } from '#root/bot/middlewares/conversation.js'
 
 interface Dependencies {
   config: Config
@@ -62,6 +64,8 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   protectedBot.use(i18n)
 
   protectedBot.use(conversations())
+  protectedBot.use(setTodoNameConversation())
+  protectedBot.use(exitConversationMiddleware())
 
   // Handlers
   protectedBot.use(startFeature)

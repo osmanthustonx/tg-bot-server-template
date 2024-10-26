@@ -12,6 +12,7 @@ interface todo { id: string, name: string, priority: 'high' | 'medium' | 'low', 
 
 export interface SessionData {
   adding?: todo
+  addingForm: Record<number, todo>
   pending: todo[]
   completed: (todo & { completed_at: string })[]
   deleted: (todo & { deleted_at: string })[]

@@ -87,16 +87,6 @@ export async function redundantConversationChecker(ctx: Context): Promise<boolea
   return false
 }
 
-// export async function redundantConversationChecker(ctx: Context) {
-//   const active = await ctx.conversation.active()
-
-//   if (active?.[SET_TODO_NAME_CONVERSATION] || active?.[SET_TODO_NAME_CONVERSATION]) {
-//     ctx.deleteMessage().catch(console.error)
-//     return true
-//   }
-//   return false
-// }
-
 export async function newLeaveConversation(
   ctx: Context,
   conversation: Conversation<Context>,

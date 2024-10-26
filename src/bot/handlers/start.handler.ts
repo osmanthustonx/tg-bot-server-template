@@ -36,14 +36,15 @@ export async function handleEditViewTodo(ctx: CallbackQueryContext<Context>) {
 }
 
 export async function handleEditAddTodo(ctx: Context) {
-  if (!ctx.session.adding)
-    return
+  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.addingForm[ctx.callbackQuery.message.message_id])
+    return ctx.reply('session 消失ㄌ')
+  const form = ctx.session.addingForm[ctx.callbackQuery.message.message_id]
   return ctx.editMessageText(
     dedent`
       添加代辦事項:
-      ${ctx.session.adding.name}
-      ${ctx.session.adding.priority}
-      ${ctx.session.adding.due_date}
+      ${form.name}
+      ${form.priority}
+      ${form.due_date}
     `,
     { reply_markup: addTodoKeyboard(ctx) },
   )
@@ -64,8 +65,6 @@ export async function handleReplyAddTodo(ctx: Context) {
 }
 
 export async function handleEditSelectPriority(ctx: Context) {
-  if (!ctx.session.adding)
-    return
   return ctx.editMessageText(
     dedent`請選擇優先級`,
     { reply_markup: priorityKeyboard(ctx) },

@@ -65,9 +65,10 @@ export function setTodoNameConversation() {
         conversation.session.conversationMsgBuffer.push(errorMessage.message_id)
         await conversation.skip({ drop: true })
       }
-      if (conversation.session.adding) {
-        conversation.session.adding.name = input
-        prev.session.adding = conversation.session.adding
+
+      if (prev.callbackQuery?.message?.message_id) {
+        conversation.session.addingForm[prev.callbackQuery.message.message_id].name = input
+        prev.session.addingForm = conversation.session.addingForm
       }
       Promise.all([
         handleEditAddTodo(prev),

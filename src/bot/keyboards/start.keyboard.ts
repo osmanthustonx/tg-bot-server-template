@@ -31,10 +31,13 @@ export function viewTodoKeyboard(ctx: Context, id: string) {
 }
 
 export function addTodoKeyboard(ctx: Context) {
+  if (!ctx.callbackQuery?.message?.message_id)
+    return
+  const form = ctx.session.addingForm[ctx.callbackQuery.message.message_id]
   const keyboard = [
     [
-      { text: `名稱: ${ctx.session.adding?.name}`, callback_data: setTodoName.pack({}) },
-      { text: `優先級: ${ctx.session.adding?.priority}`, callback_data: selectPriority.pack({}) },
+      { text: `名稱: ${form.name}`, callback_data: setTodoName.pack({}) },
+      { text: `優先級: ${form.priority}`, callback_data: selectPriority.pack({}) },
     ],
     [
       { text: '確認', callback_data: submitTodo.pack({}) },

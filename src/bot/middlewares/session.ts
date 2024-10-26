@@ -10,6 +10,7 @@ export function session(options: Options): Middleware<Context> {
     initial: () => ({
       conversationMsgBuffer: [],
       adding: undefined,
+      addingForm: {},
       pending: [
         {
           id: '1',

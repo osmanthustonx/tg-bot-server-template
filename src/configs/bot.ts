@@ -11,7 +11,8 @@ const baseConfigSchema = v.object({
   serviceApiUrl: v.optional(v.string()),
   redisHost: v.optional(v.string(), ''),
   redisPort: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '6379'),
-  redisIndex: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '1'),
+  permRedisIndex: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '1'),
+  tempRedisIndex: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '1'),
 })
 
 const configSchema = v.variant('botMode', [

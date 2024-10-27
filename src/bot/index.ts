@@ -27,12 +27,13 @@ interface Dependencies {
 }
 
 interface Options {
-  botSessionStorage?: StorageAdapter<SessionData>
+  permSessionStorage?: StorageAdapter<SessionData['perm']>
+  tempSessionStorage?: StorageAdapter<SessionData['temp']>
   botConfig?: Omit<BotConfig<Context>, 'ContextConstructor'>
 }
 
 function getSessionKey(ctx: Omit<Context, 'session'>) {
-  return ctx.chat?.id.toString()
+  return ctx.from?.id.toString()
 }
 
 export function createBot(token: string, dependencies: Dependencies, options: Options = {}) {
@@ -60,7 +61,17 @@ export function createBot(token: string, dependencies: Dependencies, options: Op
   protectedBot.use(autoChatAction(bot.api))
   protectedBot.use(hydrateReply)
   protectedBot.use(hydrate())
-  protectedBot.use(session({ getSessionKey, storage: options.botSessionStorage }))
+  protectedBot.use(session({
+    type: 'multi',
+    perm: {
+      getSessionKey,
+      storage: options.permSessionStorage,
+    },
+    temp: {
+      getSessionKey,
+      storage: options?.tempSessionStorage,
+    },
+  }))
   protectedBot.use(i18n)
 
   protectedBot.use(conversations())

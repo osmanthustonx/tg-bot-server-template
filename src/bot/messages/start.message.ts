@@ -2,7 +2,7 @@ import dedent from 'dedent'
 import type { Context } from '#root/bot/context.js'
 
 export function todoListMessage(ctx: Context) {
-  const content = ctx.session.pending.map((todo, index) => {
+  const content = ctx.session.perm.pending.map((todo, index) => {
     return dedent`
     ${index + 1}. ${todo.name} - ${todo.priority}
     `
@@ -14,7 +14,7 @@ export function todoListMessage(ctx: Context) {
 }
 
 export function viewTodoMessage(ctx: Context, id: string) {
-  const content = ctx.session.pending.find(todo => todo.id === id)
+  const content = ctx.session.perm.pending.find(todo => todo.id === id)
   if (!content)
     return '沒找到'
   return dedent`
@@ -26,7 +26,7 @@ export function viewTodoMessage(ctx: Context, id: string) {
 }
 
 export function completedListMessage(ctx: Context) {
-  const content = ctx.session.completed.map((todo, index) => {
+  const content = ctx.session.perm.completed.map((todo, index) => {
     return dedent`
     ${index + 1}. ${todo.name} - ${todo.priority} - ${todo.completed_at}
     `

@@ -6,10 +6,11 @@ import { onShutdown } from '#root/utils/starter.js'
 import { loadRedisStorage } from '#root/loaders/redis.loader.js'
 
 export default async function loadBot(config: Config, logger: Logger) {
-  const { botSessionStorage } = loadRedisStorage()
+  const { permSessionStorage, tempSessionStorage } = loadRedisStorage()
 
   const bot = createBot(config.botToken, { config, logger }, {
-    botSessionStorage,
+    permSessionStorage,
+    tempSessionStorage,
   })
   await bot.init()
   if (config.isWebhookMode) {

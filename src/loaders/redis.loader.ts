@@ -4,19 +4,32 @@ import type { SessionData } from '#root/bot/context.js'
 import { config } from '#root/configs/bot.js'
 
 export function loadRedisStorage() {
-  const redisInstance = new Redis({
+  const permRedisInstance = new Redis({
     host: config.redisHost,
     port: config.redisPort,
-    db: config.redisIndex,
+    db: config.permRedisIndex,
   })
 
-  const botSessionStorage = new RedisAdapter<SessionData>({
-    instance: redisInstance,
-    ttl: 604_800, // 7 天
+  const permSessionStorage = new RedisAdapter<SessionData['perm']>({
+    instance: permRedisInstance,
+  })
+
+  const tempRedisInstance = new Redis({
+    host: config.redisHost,
+    port: config.redisPort,
+    db: config.tempRedisIndex,
+  })
+
+  const tempSessionStorage = new RedisAdapter<SessionData['temp']>({
+    instance: tempRedisInstance,
+    ttl: 86_400, // 1 天
+    // ttl: 20, // 20 秒
   })
 
   return {
-    redisInstance,
-    botSessionStorage,
+    permRedisInstance,
+    tempRedisInstance,
+    permSessionStorage,
+    tempSessionStorage,
   }
 }

@@ -20,7 +20,7 @@ feature.callbackQuery(viewTodo.filter(), logHandle('view todo'), (ctx) => {
 })
 
 feature.callbackQuery(addTodo.filter(), logHandle('add todo'), (ctx) => {
-  // ctx.session.adding = {
+  // ctx.session.temp.adding = {
   //   id: randomUUID(),
   //   created_at: new Date().toDateString(),
   //   due_date: '',
@@ -29,7 +29,7 @@ feature.callbackQuery(addTodo.filter(), logHandle('add todo'), (ctx) => {
   //   status: 'pending',
   // }
   if (ctx.callbackQuery.message?.message_id) {
-    ctx.session.addingForm[ctx.callbackQuery.message.message_id] = {
+    ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id] = {
       id: randomUUID(),
       created_at: new Date().toDateString(),
       due_date: '',
@@ -61,7 +61,7 @@ feature.callbackQuery(selectPriority.filter(), logHandle('select priority'), (ct
 feature.callbackQuery(setPriority.filter(), logHandle('set priority'), (ctx) => {
   const { priority } = setPriority.unpack(ctx.callbackQuery.data)
   if (ctx.callbackQuery.message?.message_id)
-    ctx.session.addingForm[ctx.callbackQuery.message.message_id].priority = priority as 'low' | 'medium' | 'high'
+    ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id].priority = priority as 'low' | 'medium' | 'high'
   return Promise.all([
     handleEditAddTodo(ctx),
     ctx.answerCallbackQuery(),

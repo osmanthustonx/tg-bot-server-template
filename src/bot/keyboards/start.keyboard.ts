@@ -5,7 +5,7 @@ import { backElement } from '#root/bot/keyboards/common.keyboard.js'
 
 export function startKeyboard(ctx: Context) {
   const keyboard = [
-    ctx.session.pending.map(todo => ({ text: ctx.t('start.view-todo', { name: todo.name }), callback_data: viewTodo.pack({ id: todo.id }) })),
+    ctx.session.perm.pending.map(todo => ({ text: ctx.t('start.view-todo', { name: todo.name }), callback_data: viewTodo.pack({ id: todo.id }) })),
     [
       { text: ctx.t('start.view-completed-list'), callback_data: viewCompletedList.pack({}) },
       { text: ctx.t('start.add-todo'), callback_data: addTodo.pack({}) },
@@ -33,7 +33,7 @@ export function viewTodoKeyboard(ctx: Context, id: string) {
 export function addTodoKeyboard(ctx: Context) {
   if (!ctx.callbackQuery?.message?.message_id)
     return
-  const form = ctx.session.addingForm[ctx.callbackQuery.message.message_id]
+  const form = ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id]
   const keyboard = [
     [
       { text: `名稱: ${form.name}`, callback_data: setTodoName.pack({}) },

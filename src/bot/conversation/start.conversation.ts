@@ -54,27 +54,27 @@ export function setTodoNameConversation() {
 
       ctx = await conversation.waitFor(['callback_query:data', 'message:text'])
 
-      await newLeaveConversation(ctx, conversation, [message.message_id].concat(conversation.session.conversationMsgBuffer))
+      await newLeaveConversation(ctx, conversation, [message.message_id].concat(conversation.session.temp.conversationMsgBuffer))
 
       const input = ctx.msg?.text ?? ''
 
-      conversation.session.conversationMsgBuffer.push(ctx.msg?.message_id ?? 0)
+      conversation.session.temp.conversationMsgBuffer.push(ctx.msg?.message_id ?? 0)
       const regex = /^[a-z0-9\u4E00-\u9FA5]+$/i
       if (!regex.test(input)) {
         const errorMessage = await ctx.reply(`❌wrong enter`)
-        conversation.session.conversationMsgBuffer.push(errorMessage.message_id)
+        conversation.session.temp.conversationMsgBuffer.push(errorMessage.message_id)
         await conversation.skip({ drop: true })
       }
 
       if (prev.callbackQuery?.message?.message_id) {
-        conversation.session.addingForm[prev.callbackQuery.message.message_id].name = input
-        prev.session.addingForm = conversation.session.addingForm
+        conversation.session.temp.addingForm[prev.callbackQuery.message.message_id].name = input
+        prev.session.temp.addingForm = conversation.session.temp.addingForm
       }
       Promise.all([
         handleEditAddTodo(prev),
-        ctx.deleteMessages([message.message_id].concat(conversation.session.conversationMsgBuffer)).catch(conversation.error),
+        ctx.deleteMessages([message.message_id].concat(conversation.session.temp.conversationMsgBuffer)).catch(conversation.error),
       ])
-      conversation.session.conversationMsgBuffer = []
+      conversation.session.temp.conversationMsgBuffer = []
     },
     SET_TODO_NAME_CONVERSATION,
   )
@@ -104,8 +104,8 @@ export function setTodoNameOldConversation() {
           reply_markup: retryKeyboard(ctx, SET_TODO_NAME_CONVERSATION),
         }, 1000000)
       }
-      if (conversation.session.adding)
-        conversation.session.adding.name = input
+      if (conversation.session.temp.adding)
+        conversation.session.temp.adding.name = input
       Promise.all([
         handleReplyAddTodo(ctx),
         ctx.deleteMessages([message.message_id]).catch(conversation.error),

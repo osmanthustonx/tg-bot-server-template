@@ -36,9 +36,9 @@ export async function handleEditViewTodo(ctx: CallbackQueryContext<Context>) {
 }
 
 export async function handleEditAddTodo(ctx: Context) {
-  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.addingForm[ctx.callbackQuery.message.message_id])
+  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id])
     return ctx.reply('session 消失ㄌ')
-  const form = ctx.session.addingForm[ctx.callbackQuery.message.message_id]
+  const form = ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id]
   return ctx.editMessageText(
     dedent`
       添加代辦事項:
@@ -51,14 +51,14 @@ export async function handleEditAddTodo(ctx: Context) {
 }
 
 export async function handleReplyAddTodo(ctx: Context) {
-  if (!ctx.session.adding)
+  if (!ctx.session.temp.adding)
     return
   return ctx.reply(
     dedent`
       添加代辦事項:
-      ${ctx.session.adding.name}
-      ${ctx.session.adding.priority}
-      ${ctx.session.adding.due_date}
+      ${ctx.session.temp.adding.name}
+      ${ctx.session.temp.adding.priority}
+      ${ctx.session.temp.adding.due_date}
     `,
     { reply_markup: addTodoKeyboard(ctx) },
   )
@@ -73,14 +73,14 @@ export async function handleEditSelectPriority(ctx: Context) {
 
 export async function handleEditCompleteTodo(ctx: CallbackQueryContext<Context>) {
   const { id } = completeTodo.unpack(ctx.callbackQuery.data)
-  const targetTodoIndex = ctx.session.pending.findIndex(todo => todo.id === id)
+  const targetTodoIndex = ctx.session.perm.pending.findIndex(todo => todo.id === id)
   if (targetTodoIndex !== -1) {
     const completedTodo = {
-      ...ctx.session.pending[targetTodoIndex],
+      ...ctx.session.perm.pending[targetTodoIndex],
       completed_at: new Date().toDateString(),
     }
-    ctx.session.completed.push(completedTodo)
-    ctx.session.pending.splice(targetTodoIndex, 1)
+    ctx.session.perm.completed.push(completedTodo)
+    ctx.session.perm.pending.splice(targetTodoIndex, 1)
   }
 
   return handleEditStart(ctx)
@@ -88,9 +88,9 @@ export async function handleEditCompleteTodo(ctx: CallbackQueryContext<Context>)
 
 export async function handleEditDeletedTodo(ctx: CallbackQueryContext<Context>) {
   const { id } = deleteTodo.unpack(ctx.callbackQuery.data)
-  const targetTodoIndex = ctx.session.pending.findIndex(todo => todo.id === id)
+  const targetTodoIndex = ctx.session.perm.pending.findIndex(todo => todo.id === id)
   if (targetTodoIndex !== -1) {
-    ctx.session.pending.splice(targetTodoIndex, 1)
+    ctx.session.perm.pending.splice(targetTodoIndex, 1)
   }
 
   return handleEditStart(ctx)

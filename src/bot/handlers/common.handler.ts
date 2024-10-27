@@ -16,6 +16,13 @@ export async function removeMessage(ctx: Context, message: string, other?: Other
   })
 }
 
+export async function handleAnswer(ctx: Context, handler: () => void) {
+  return Promise.all([
+    handler(),
+    ctx.answerCallbackQuery(),
+  ])
+}
+
 export function leaveConversation(ctx: Context, messageId: number) {
   if (ctx.hasCallbackQuery('back:delete')) {
     ctx.deleteMessages([messageId]).catch(console.error)

@@ -23,7 +23,6 @@ export function loadRedisStorage() {
   const tempSessionStorage = new RedisAdapter<SessionData['temp']>({
     instance: tempRedisInstance,
     ttl: 86_400, // 1 天
-    // ttl: 20, // 20 秒
   })
 
   return {

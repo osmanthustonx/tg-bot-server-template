@@ -5,6 +5,7 @@ import { logHandle } from '#root/bot/helpers/logging.js'
 import { handleCommandStart, handleEditAddTodo, handleEditCompleteTodo, handleEditCompletedList, handleEditDeletedTodo, handleEditSelectPriority, handleEditViewTodo } from '#root/bot/handlers/start.handler.js'
 import { addTodo, completeTodo, deleteTodo, selectPriority, setPriority, setTodoName, viewCompletedList, viewTodo } from '#root/bot/callback-data/start.callbackdata.js'
 import { SET_TODO_NAME_CONVERSATION } from '#root/bot/conversation/start.conversation.js'
+import { handleAnswer } from '#root/bot/handlers/common.handler.js'
 
 const composer = new Composer<Context>()
 
@@ -45,27 +46,24 @@ feature.callbackQuery(addTodo.filter(), logHandle('add todo'), (ctx) => {
 })
 
 feature.callbackQuery(setTodoName.filter(), logHandle('set todo name'), async (ctx) => {
-  return Promise.all([
-    ctx.conversation.enter(SET_TODO_NAME_CONVERSATION),
-    ctx.answerCallbackQuery(),
-  ])
+  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id])
+    return handleAnswer(ctx, () => ctx.reply('session 消失ㄌ'))
+  return handleAnswer(ctx, () => ctx.conversation.enter(SET_TODO_NAME_CONVERSATION))
 })
 
 feature.callbackQuery(selectPriority.filter(), logHandle('select priority'), (ctx) => {
-  return Promise.all([
-    handleEditSelectPriority(ctx),
-    ctx.answerCallbackQuery(),
-  ])
+  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id])
+    return handleAnswer(ctx, () => ctx.reply('session 消失ㄌ'))
+  return handleAnswer(ctx, () => handleEditSelectPriority(ctx))
 })
 
 feature.callbackQuery(setPriority.filter(), logHandle('set priority'), (ctx) => {
+  if (!ctx.callbackQuery?.message?.message_id || !ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id])
+    return handleAnswer(ctx, () => ctx.reply('session 消失ㄌ'))
   const { priority } = setPriority.unpack(ctx.callbackQuery.data)
   if (ctx.callbackQuery.message?.message_id)
     ctx.session.temp.addingForm[ctx.callbackQuery.message.message_id].priority = priority as 'low' | 'medium' | 'high'
-  return Promise.all([
-    handleEditAddTodo(ctx),
-    ctx.answerCallbackQuery(),
-  ])
+  return handleAnswer(ctx, () => handleEditAddTodo(ctx))
 })
 
 feature.callbackQuery(completeTodo.filter(), logHandle('complete todo'), (ctx) => {

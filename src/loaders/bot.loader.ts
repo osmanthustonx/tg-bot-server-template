@@ -4,6 +4,7 @@ import type { Config, PollingConfig, WebhookConfig } from '#root/configs/bot.js'
 import type { Logger } from '#root/logger.js'
 import { onShutdown } from '#root/utils/starter.js'
 import { loadRedisStorage } from '#root/loaders/redis.loader.js'
+import { di } from '#root/server/di/bot.container.js'
 
 export default async function loadBot(config: Config, logger: Logger) {
   const { permSessionStorage, tempSessionStorage } = loadRedisStorage()
@@ -12,17 +13,24 @@ export default async function loadBot(config: Config, logger: Logger) {
     permSessionStorage,
     tempSessionStorage,
   })
+
+  di.setBot(bot)
+    .setLogger(logger)
+    .setConfig(config)
+
   await bot.init()
   if (config.isWebhookMode) {
-    await loadWebhookBot(bot, config, logger)
+    await loadWebhookBot(config)
   }
   else {
-    await loadPollingBot(bot, config, logger)
+    await loadPollingBot(config)
   }
   return bot
 }
 
-async function loadPollingBot(bot: ReturnType<typeof createBot>, config: PollingConfig, logger: Logger) {
+async function loadPollingBot(config: PollingConfig) {
+  const bot = di.getBot()
+  const logger = di.getLogger()
   let runner: undefined | RunnerHandle
 
   // graceful shutdown
@@ -48,7 +56,10 @@ async function loadPollingBot(bot: ReturnType<typeof createBot>, config: Polling
   })
 }
 
-async function loadWebhookBot(bot: ReturnType<typeof createBot>, config: WebhookConfig, logger: Logger) {
+async function loadWebhookBot(config: WebhookConfig) {
+  const bot = di.getBot()
+  const logger = di.getLogger()
+
   // set webhook
   await bot.api.setWebhook(config.botWebhook, {
     allowed_updates: config.botAllowedUpdates,

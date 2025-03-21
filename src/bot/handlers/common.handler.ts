@@ -1,11 +1,11 @@
-import type { Other } from '@grammyjs/hydrate'
 import type { Conversation } from '@grammyjs/conversations'
-import type { Message } from 'grammy/types'
-import type { MessageXFragment } from '@grammyjs/hydrate/out/data/message.js'
+import type { Other } from '@grammyjs/hydrate'
+import { back } from '#root/bot/callback-data/common.callbackdata.js'
+import { language } from '#root/bot/callback-data/language.callbackdata.js'
 import type { Context } from '#root/bot/context.js'
-import { delay2 } from '#root/constants/time.js'
-import { deleteMessageKeyboard } from '#root/bot/keyboards/common.keyboard.js'
 import { timerManager } from '#root/bot/helpers/timer-manager.js'
+import { deleteMessageKeyboard } from '#root/bot/keyboards/common.keyboard.js'
+import { delay2 } from '#root/constants/time.js'
 
 export async function removeMessage(ctx: Context, message: string, other?: Other<'sendMessage', 'chat_id' | 'text'>, delay = delay2) {
   return ctx.reply(message, other).then((msg) => {
@@ -14,12 +14,32 @@ export async function removeMessage(ctx: Context, message: string, other?: Other
   })
 }
 
-export function leaveConversation(ctx: Context, messageId: number) {
-  if (ctx.hasCallbackQuery('back:delete')) {
-    ctx.deleteMessages([messageId]).catch(console.error)
+export function leaveConversationChecker(ctx: Context) {
+  const isCommand = ['/start', '/language'].includes(ctx.message?.text ?? '')
+  const shouldLeaveCallback = [
+    back,
+    language,
+  ].some((callback) => {
+    return callback.filter().test(ctx.callbackQuery?.data ?? '')
+  })
+
+  if (isCommand || shouldLeaveCallback) {
     return true
   }
   return false
+}
+
+export async function leaveConversation(
+  ctx: Context,
+  conversation: Conversation<Context>,
+  messageIds: number[],
+) {
+  if (leaveConversationChecker(ctx)) {
+    ctx.deleteMessages(messageIds).catch(conversation.error)
+    if (conversation.session.msgId.length)
+      conversation.session.msgId = []
+    await conversation.skip()
+  }
 }
 
 export async function checkIsDeleteCallbackQuery(
@@ -34,21 +54,9 @@ export async function checkIsDeleteCallbackQuery(
   }
 }
 
-export async function conversationCheck(
-  ctx: Context,
-  conversation: Conversation<Context>,
-  messageId: number,
-) {
-  await checkIsDeleteCallbackQuery(ctx, conversation)
-  return leaveConversation(ctx, messageId)
-}
-
 export async function handleConversationFieldInput(
   ctx: Context,
   conversation: Conversation<Context>,
-  fieldName: string,
-  backFn: (ctx: Context) => Promise<true | void | (Message.CommonMessage & MessageXFragment & Message)>,
-  prevMsgsId?: number[],
 ) {
   const fieldMsg = await ctx.reply(
     `${ctx.t('start.plz-enter')}`,
@@ -57,12 +65,8 @@ export async function handleConversationFieldInput(
 
   ctx = await conversation.waitFor(['callback_query:data', 'message:text'])
 
-  if (await conversationCheck(ctx, conversation, fieldMsg.message_id)) {
-    backFn(ctx)
-    if (prevMsgsId)
-      ctx.deleteMessages([fieldMsg.message_id, ...prevMsgsId]).catch(console.error)
-    return null
-  }
+  await leaveConversation(ctx, conversation, conversation.session.msgId)
+
   const fieldAnswerMsgId = ctx.msg?.message_id ?? 0
   const fieldAnswer = ctx.msg?.text ?? ''
 

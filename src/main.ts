@@ -9,9 +9,7 @@ import { loadServer } from '#root/loaders/server.loader.js'
 try {
   const bot = await loadBot(config, logger)
 
-  if (config.isWebhookMode) {
-    await loadServer(bot, config, logger)
-  }
+  await loadServer(bot, config, logger)
 
   logger.info('Application started successfully')
 }

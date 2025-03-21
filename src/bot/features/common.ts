@@ -2,7 +2,7 @@ import { Composer } from 'grammy'
 import type { Context } from '#root/bot/context.js'
 import { logHandle } from '#root/bot/helpers/logging.js'
 import { back, retry } from '#root/bot/callback-data/common.callbackdata.js'
-import { handleEditStart } from '#root/bot/handlers/start.handler.js'
+import { handleStart } from '#root/bot/handlers/start.handler.js'
 import { timerManager } from '#root/bot/helpers/timer-manager.js'
 
 const composer = new Composer<Context>()
@@ -16,7 +16,7 @@ feature.callbackQuery(
     const values: unknown[] = [ctx.answerCallbackQuery()]
     const { to } = back.unpack(ctx.callbackQuery.data)
     if (to === 'start')
-      values.push(handleEditStart(ctx))
+      values.push(handleStart(ctx))
 
     return Promise.all(values)
   },

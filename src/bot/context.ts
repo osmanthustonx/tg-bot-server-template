@@ -10,6 +10,7 @@ import type { Config } from '#root/configs/bot.js'
 
 export interface SessionData {
   // field?: string;
+  msgId: number[]
 }
 
 interface ExtendedContextFlavor {

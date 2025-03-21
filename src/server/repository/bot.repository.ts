@@ -6,9 +6,20 @@
 // 4. 返回原始數據，不進行數據轉換
 
 import { service } from '#root/api/index.js'
+import { botDi } from '#root/server/di/bot.container.js'
 
 export async function fetchBasic(dataKey: string) {
   // 從數據庫獲取 bot 狀態
 
   return service.getTest(dataKey)
+}
+
+export async function sendMessage(uid: number, content: string, option?: any) {
+  const bot = botDi.getBot()
+  return bot.api.sendMessage(uid, content, option)
+}
+
+export async function editMessageText(uid: number, msgId: number, content: string, option?: any) {
+  const bot = botDi.getBot()
+  return bot.api.editMessageText(uid, msgId, content, option)
 }

@@ -4,7 +4,7 @@ import { i18n } from '#root/bot/i18n.js'
 import type { Context } from '#root/bot/context.js'
 import { handleConversationFieldInput, removeMessage } from '#root/bot/handlers/common.handler.js'
 import { retryKeyboard } from '#root/bot/keyboards/common.keyboard.js'
-import { handleReplyStart } from '#root/bot/handlers/start.handler.js'
+import { handleStart } from '#root/bot/handlers/start.handler.js'
 import { service } from '#root/api/index.js'
 
 export const CREATE_USER_CONVERSATION = 'create user'
@@ -17,7 +17,7 @@ export function createUserConversation() {
       if (!ctx.callbackQuery?.data)
         return console.error('錯誤 callback data')
 
-      const fieldResult = await handleConversationFieldInput(ctx, conversation, 'uid', handleReplyStart)
+      const fieldResult = await handleConversationFieldInput(ctx, conversation)
 
       if (!fieldResult)
         return
@@ -35,7 +35,7 @@ export function createUserConversation() {
         })
       }
 
-      handleReplyStart(ctx)
+      handleStart(ctx, 'reply')
     },
     CREATE_USER_CONVERSATION,
   )

@@ -8,6 +8,11 @@ const baseConfigSchema = v.object({
   botToken: v.pipe(v.string(), v.regex(/^\d+:[\w-]+$/, 'Invalid token')),
   botAllowedUpdates: v.optional(v.pipe(v.string(), v.transform(JSON.parse), v.array(v.picklist(API_CONSTANTS.ALL_UPDATE_TYPES))), '[]'),
   botAdmins: v.optional(v.pipe(v.string(), v.transform(JSON.parse), v.array(v.number())), '[]'),
+  serverHost: v.optional(v.string(), '0.0.0.0'),
+  serverPort: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '80'),
+  redisHost: v.optional(v.string(), '0.0.0.0'),
+  redisPort: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '6379'),
+  redisIndex: v.optional(v.pipe(v.string(), v.transform(Number), v.number()), '1'),
   serviceApiUrl: v.optional(v.string()),
 })
 

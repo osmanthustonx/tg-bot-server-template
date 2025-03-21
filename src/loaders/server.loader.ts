@@ -1,10 +1,10 @@
 import { createServer, createServerManager } from '#root/server/index.js'
-import type { WebhookConfig } from '#root/configs/bot.js'
+import type { Config } from '#root/configs/bot.js'
 import type { Logger } from '#root/logger.js'
 import type { Bot } from '#root/bot/index.js'
 import { onShutdown } from '#root/utils/starter.js'
 
-export async function loadServer(bot: Bot, config: WebhookConfig, logger: Logger) {
+export async function loadServer(bot: Bot, config: Config, logger: Logger) {
   const server = createServer({
     bot,
     config,

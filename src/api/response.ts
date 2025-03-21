@@ -7,10 +7,7 @@ export interface BaseRes {
   data?: unknown
 }
 
-export type ErrorRes = HTTPError<{
-  code: string
-  message: string
-}>
+export type ErrorRes = HTTPError<BaseRes>
 
 export type ExampleRes = CamelCasedPropertiesDeep<{
   id: number
